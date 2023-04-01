@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D297272E-58DF-49B3-9F76-2667641A82B1}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>noteApp</RootNamespace>
-    <AssemblyName>noteApp</AssemblyName>
+    <RootNamespace>NoteAppConsole</RootNamespace>
+    <AssemblyName>NoteAppConsole</AssemblyName>
     <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -37,6 +37,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="note.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
