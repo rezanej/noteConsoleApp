@@ -8,8 +8,8 @@ namespace NoteAppConsole
     {
         static void Main(string[] args)
         {
-           /* DateTime a = new DateTime(2010,5,2,12,5,3);
-            note g = new note(2, "dkfdgfgfgfhdkf", "test5", "tag0", a);
+            /*DateTime a = new DateTime(2010, 5, 2, 12, 5, 3);
+            note g = new note(2, "rt545454fdkfdgcxxxxxxxxxxxxxxxxxxxx54564egdrffdgerdgdfgdfgdffgfgfhdkf", "test8867888ggh", "tag0", a);
             note.addnote(g);*/
             mainMenu();
             Console.ReadKey();
@@ -49,7 +49,7 @@ namespace NoteAppConsole
         static void showNotesMenu()
         {
             Console.WriteLine("for going to note enter number of it  (like 6):\n=>");
-            showTitles();
+            string[] titles =showTitles();
             do
             {
                 try
@@ -57,31 +57,36 @@ namespace NoteAppConsole
                     int menuNum = int.Parse(Console.ReadLine());
                     if (menuNum >= 1 && menuNum <= note.numberOfNotes)                          
                     {
-                        
+                        showNote(titles[menuNum-1]);
+                       
+                        break;
                     } 
                     else throw new Exception() ;
                             
                 }
-                catch
+                catch( Exception e)
                 {
+                    Console.WriteLine(e.Message);
                     Console.WriteLine("please enter just number (like 6) : =>");
                 }
             }
             while (true);
 
         }
-        static void showTitles()
+        static string[] showTitles()
         {
             Console.WriteLine("notes:");
-            foreach (string item in note.getTitles())
+            string[] titles = note.getTitles();
+            foreach (string item in titles)
             {
                 Console.WriteLine(item);
             }
+            return titles;
         }
-        static void showNote()
-
+        static void showNote(string title)
         {
-
+            note n = note.getNote(title);
+            Console.WriteLine(n.text);
         }
         static void addNote()
         {
