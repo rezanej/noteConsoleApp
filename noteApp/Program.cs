@@ -167,7 +167,11 @@ namespace NoteAppConsole
         {
             Console.Clear();
             string[] titles = note.getTitles();
+           
+
             bool exitloop = false;
+            if (titles.Length == 0)
+                exitloop = true;
             string title;
             string tag;
             string text;
