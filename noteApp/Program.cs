@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
+using System.Threading;
 
 namespace NoteAppConsole
 {
@@ -8,11 +10,7 @@ namespace NoteAppConsole
     {
         static void Main(string[] args)
         {
-            /*DateTime a = new DateTime(2010, 5, 2, 12, 5, 3);
-            note g = new note(2, "rt545454fdkfdgcxxxxxxxxxxxxxxxxxxxx54564egdrffdgerdgdfgdfgdffgfgfhdkf", "test8867888ggh", "tag0", a);
-            note.addnote(g);*/
             mainMenu();
-            Console.ReadKey();
         }
         static void mainMenu()
         {
@@ -21,10 +19,11 @@ namespace NoteAppConsole
             {
                 try
                 {
+                    Console.Clear();
                     Console.WriteLine("enter the number of the menu and press enter:");
-                    Console.WriteLine("1-show notes (includes delete too)\n2-add note\n=>");
+                    Console.WriteLine("1-show notes (includes delete too)\n2-add note\n3-exit\n=>");
                     int menuNum = int.Parse(Console.ReadLine());
-                    if (menuNum >= 1 && menuNum <= 2)  // i know about == just maybe number of menu was
+                    if (menuNum >= 1 && menuNum <= 3)  // i know about == just maybe number of menu was
                                                        // more like 6 part it be easiter two just change one number
                     {
                         switch (menuNum)
@@ -32,29 +31,46 @@ namespace NoteAppConsole
                             case 1:
                                 showNotesMenu();
                                 break;
+                            case 2:
+                                addNote();
+                                break;
+                            case 3:
+                                Environment.Exit(1);
+                                break;
                         }
 
-                        break;
+                        Console.WriteLine();
                     } 
                     else throw new Exception() ;
                             
                 }
                 catch
                 {
-                    Console.WriteLine("please enter just number and from (1 , 2) : =>");
+                    Console.WriteLine("please enter just number and from (1 , 2,3) : =>");
                 }
             }
             while (true);
         }
         static void showNotesMenu()
         {
-            Console.WriteLine("for going to note enter number of it  (like 6):\n=>");
+            Console.Clear();
+            Console.WriteLine("for going to note enter number of it and q for quit (like 6):\n=>");
             string[] titles =showTitles();
             do
             {
                 try
                 {
-                    int menuNum = int.Parse(Console.ReadLine());
+
+                    string inp = Console.ReadLine();
+                    int menuNum;
+                    if(inp=="Q" || inp=="q")
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        menuNum = int.Parse(inp);
+                    }
                     if (menuNum >= 1 && menuNum <= note.numberOfNotes)                          
                     {
                         showNote(titles[menuNum-1]);
@@ -66,8 +82,8 @@ namespace NoteAppConsole
                 }
                 catch( Exception e)
                 {
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("please enter just number (like 6) : =>");
+                    
+                    Console.WriteLine("please enter just number (like 6) or q :\n =>");
                 }
             }
             while (true);
@@ -76,21 +92,128 @@ namespace NoteAppConsole
         static string[] showTitles()
         {
             Console.WriteLine("notes:");
+            
             string[] titles = note.getTitles();
-            foreach (string item in titles)
+            for (int i = 0; i < titles.Length; i++)
             {
-                Console.WriteLine(item);
+                Console.WriteLine($"{i + 1}-{titles[i]}");
             }
+            Console.WriteLine("=> ");
             return titles;
         }
         static void showNote(string title)
         {
+            Console.Clear();
             note n = note.getNote(title);
-            Console.WriteLine(n.text);
+            Console.WriteLine($"-----------------------------------------------");
+            Console.WriteLine($"title:{n.title}  |  tag:{n.tag}      | date created:{n.dateCreated}\ntext:");
+            Console.WriteLine($"     {n.text}");
+            Console.WriteLine("\n\n------------------------------------------------");
+            Console.WriteLine("\nEnter q for going to menu d for deleting the note:\n =>");
+            bool exit = false;
+            do
+            {
+                try
+                {
+                    string inp = Console.ReadLine();
+                    switch (inp)
+                    {
+                        case "q":
+                        case "Q":
+                            exit = true;
+                            break;
+                        case "d":
+                        case "D":
+                            if(n.delete())
+                            {
+                                exit = true;
+                                Console.WriteLine("delete was succesfull\n");
+                                Stopwatch stopwatch = Stopwatch.StartNew();
+                                while (true)
+                                {
+                                    
+                                    if (stopwatch.ElapsedMilliseconds >= 2000)
+                                    {
+                                        break;
+                                    }
+                                    
+                                }
+                               
+                            }
+                            else
+                            {
+                                throw new Exception();
+                            }
+
+                            
+                            break;
+
+                        default:
+                            throw new Exception();
+                    }
+                    
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("please enter just (q,Q,d,D) :\n =>");
+                }
+            }
+            while (!exit);
+
         }
         static void addNote()
         {
+            Console.Clear();
+            string[] titles = note.getTitles();
+            bool exitloop = false;
+            string title;
+            string tag;
+            string text;
+            Console.WriteLine("--------------------------");
+            do
+            {
+                Console.WriteLine("Enter the title:\n=>");
+                title = Console.ReadLine();
+                if(title=="")
+                {
 
+                    Console.WriteLine("title cannot be empty!!!!");
+                    continue;
+                }
+                  
+                foreach (string item in titles)
+                {
+                    if(title!=item)
+                    {
+                        exitloop = true;
+                    }
+                    else
+                    {
+                        exitloop = false;
+                    }
+                }
+
+            } while (!exitloop);
+            Console.WriteLine("Enter tag:\n=>");
+            tag = Console.ReadLine();
+            Console.WriteLine("Enter text:\n=>");
+            text = Console.ReadLine();
+
+            note g = new note(2,text, title, tag, "");
+            note.addnote(g);
+            Console.WriteLine("--------------------------\nnote Added");
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            while (true)
+            {
+
+                if (stopwatch.ElapsedMilliseconds >= 2000)
+                {
+                    break;
+                }
+
+            }
         }
         static string chooseTag()
         {

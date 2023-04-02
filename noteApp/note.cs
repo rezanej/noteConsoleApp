@@ -19,10 +19,38 @@ namespace NoteAppConsole
 
         private int id { get; }
         public string text { get; set; }
-        private string title { get; set; }
-        private string tag { get; set; }
-        private string dateCreated { get; }
+        public string title { get; set; }
+        public string tag { get; set; }
+        public string dateCreated { get; }
 
+
+        public  bool delete()
+        {
+            try
+            {
+                string connectionString = "uri=file:database.db";
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+                    string commandString = $"delete from notes where title = '{title}';";
+                    
+
+                    using (SQLiteCommand command = new SQLiteCommand(commandString, connection))
+                    {
+                        command.ExecuteNonQuery();
+                        command.Cancel();
+                        command.Dispose();
+                    }
+                    connection.Close();
+                }
+            }
+            catch
+            {
+                Console.WriteLine("ekjfkdlhsfkl");
+                return false;
+            }
+            return true;
+        }
         public static string[] getTitles()
         {
 
@@ -35,12 +63,16 @@ namespace NoteAppConsole
 
                 using (SQLiteCommand command = new SQLiteCommand(commandString, connection))
                 {
-                    SQLiteDataReader reader = command.ExecuteReader();
-                    
-                    while (reader.Read())
+                    using (SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        data.Add($"{reader["title"]}");
-                    }
+                        while (reader.Read())
+                        {
+                            data.Add($"{reader["title"]}");
+                        }
+                        command.Cancel();
+                        command.Dispose();
+                        reader.Close();
+                    } 
                 }
                 connection.Close();
             }
@@ -59,7 +91,8 @@ namespace NoteAppConsole
                 {
                     command.ExecuteNonQuery();
 
-                    
+                    command.Cancel();
+                    command.Dispose();
                 }
                 connection.Close();
             }
@@ -84,7 +117,8 @@ namespace NoteAppConsole
                 using (SQLiteCommand command = new SQLiteCommand(commandString, connection))
                 {
                     command.ExecuteNonQuery();
-
+                    command.Cancel();
+                    command.Dispose();
 
                 }
                 connection.Close();
@@ -97,19 +131,24 @@ namespace NoteAppConsole
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
-                string commandString = $"select id ,text0,title, tag,cast('date0'as varchar) as date1 from notes where title='{title}'";
+                string commandString = $"select id ,text0,title, tag,cast(date0 as varchar) as date1 from notes where title='{title}'";
 
                 using (SQLiteCommand command = new SQLiteCommand(commandString, connection))
                 {
-                    SQLiteDataReader reader = command.ExecuteReader();
-                   
-                    while (reader.Read())
+                    using (SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        
-                        /*DateTime date = DateTime.ParseExact(reader["date0"].ToString(), "yyyy-MM-dd hh:mm:ss", null);*/
-                        /*Console.WriteLine(date.ToString());*/
-                        note no = new note(int.Parse(reader["id"].ToString()), reader["text0"].ToString(), reader["title"].ToString(), reader["tag"].ToString(), reader["date1"].ToString());
-                        return no;
+
+                        while (reader.Read())
+                        {
+
+                            /*DateTime date = DateTime.ParseExact(reader["date0"].ToString(), "yyyy-MM-dd hh:mm:ss", null);*/
+                            /*Console.WriteLine(date.ToString());*/
+                            note no = new note(int.Parse(reader["id"].ToString()), reader["text0"].ToString(), reader["title"].ToString(), reader["tag"].ToString(), reader["date1"].ToString());
+                            return no;
+                        }
+                        command.Cancel();
+                        command.Dispose();
+                        reader.Close();
                     }
                 }
 
